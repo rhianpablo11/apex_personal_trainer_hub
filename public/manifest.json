@@ -1,6 +1,6 @@
 {
   "name": "Apex Personal Trainer - Gerenciador de Alunos",
-  "short_name": "Apex Alunos",
+  "short_name": "Apex",
   "description": "Gerenciamento de alunos, treinos e pagamentos para personal trainer Apex",
   "start_url": "/",
   "display": "standalone",
