@@ -1,0 +1,6 @@
+{
+  "name": "Apex - Personal Trainer Hub",
+  "description": "Aplicativo offline-first integrado ao Google Drive e Google Calendar para gerenciamento de alunos de personal trainer, controle de pagamentos, horários de treinos e exportação de dados.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
