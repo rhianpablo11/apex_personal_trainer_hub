@@ -7,36 +7,25 @@ on:
   workflow_dispatch:
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
+  build-and-deploy:
+    name: Build and Deploy na VPS
+    runs-on: self-hosted 
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+
+      - name: Create Firebase Config File
+        run: |
+          # Cria o arquivo sensível com a Secret antes de compilar
+          echo "${{ secrets.FIREBASE_JSON }}" > ./firebase-applet-config.json
       
-      - name: setup docker buildx
-        uses: docker/setup-buildx-action@v3.4.0
+      - name: Build Docker Image Locally
+        run: |
+          # Compila a imagem localmente na VPS sem enviar para lugar nenhum
+          docker build -t apex-local:latest .
 
-      - name: Login to DockerHub
-        uses: docker/login-action@v3.4.0
-        with:
-          username: ${{ secrets.DOCKER_USERNAME }}
-          password: ${{ secrets.DOCKER_PASSWORD }}
-        
-      - name: Build and push Docker image
-        uses: docker/build-push-action@v5
-        with:
-          context: .
-          file: ./Dockerfile
-          push: true
-          tags: |
-            ${{ secrets.DOCKER_USERNAME }}/apex-trainer-hub:latest
-
-  deploy:
-    name: Deploy to vps amd
-    needs: build
-    runs-on: self-hosted
-
-    steps:
-      - name: run script to update image and restart container
-        run: cd /home/ubuntu/scripts_CI_CD && chmod +x deploy_apex.sh && ./deploy_apex.sh
+      - name: Run Deploy Script
+        run: |
+          chmod +x /home/ubuntu/scripts_CI_CD/deploy_apex.sh
+          /home/ubuntu/scripts_CI_CD/deploy_apex.sh
