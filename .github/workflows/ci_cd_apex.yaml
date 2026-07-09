@@ -19,7 +19,7 @@ jobs:
         env:
           FIREBASE_SECRET: ${{ secrets.FIREBASE_JSON }}
         run: |
-          echo "$FIREBASE_SECRET" > ./src/firebase-applet-config.json
+          echo "$FIREBASE_SECRET" > ./firebase-applet-config.json
       
       - name: Build Docker Image Locally
         run: |
