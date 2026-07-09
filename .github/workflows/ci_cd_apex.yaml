@@ -16,9 +16,10 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Create Firebase Config File
+        env:
+          FIREBASE_SECRET: ${{ secrets.FIREBASE_JSON }}
         run: |
-          # Cria o arquivo sensível com a Secret antes de compilar
-          echo "${{ secrets.FIREBASE_JSON }}" > ./firebase-applet-config.json
+          echo "$FIREBASE_SECRET" > ./src/firebase-applet-config.json
       
       - name: Build Docker Image Locally
         run: |
