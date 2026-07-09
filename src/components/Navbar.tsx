@@ -4,7 +4,8 @@ import {
   Settings, LogOut, Sun, Moon, Monitor, RefreshCw 
 } from 'lucide-react';
 import { ThemeMode } from '../types';
-
+// @ts-ignore
+import logoImg from '../assets/logo.jpg';
 interface NavbarProps {
   currentTab: string;
   onNavigate: (tab: string) => void;
@@ -39,9 +40,12 @@ export const Navbar: React.FC<NavbarProps> = ({
         <div className="space-y-8">
           {/* Brand/Logo */}
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-gradient-to-br from-purple-500 to-indigo-600 rounded-xl shadow-lg shadow-purple-500/20 text-white flex items-center justify-center">
-              <Dribbble className="w-5 h-5" />
-            </div>
+            <img 
+              src={logoImg} 
+              alt="Apex Logo" 
+              referrerPolicy="no-referrer"
+              className="w-10 h-10 rounded-xl shadow-lg shadow-purple-500/10 border border-purple-500/20 object-cover"
+            />
             <div>
               <h1 className="font-display font-bold text-zinc-900 dark:text-zinc-50 leading-tight tracking-tight">Apex</h1>
               <span className="text-[10px] font-semibold text-purple-600 dark:text-purple-400 tracking-wider uppercase">Trainer Hub</span>
