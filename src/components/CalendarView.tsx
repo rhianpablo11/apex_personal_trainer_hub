@@ -1009,7 +1009,7 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
                           Conflito de Horário!
                         </p>
                         <p className="text-[10px] mt-0.5 leading-relaxed font-semibold">
-                          Atenção Ítalo: <strong className="underline">{bookingConflict.name}</strong> já está agendado(a) nesse mesmo intervalo.
+                          Atenção Apex: <strong className="underline">{bookingConflict.name}</strong> já está agendado(a) nesse mesmo intervalo.
                         </p>
                         <p className="text-[9px] opacity-75 mt-0.5">
                           {bookingConflict.detail}

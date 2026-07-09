@@ -1,7 +1,7 @@
 {
-  "name": "Apex - Training Hub",
-  "short_name": "Apex",
-  "description": "Gerenciamento de alunos, treinos e pagamentos para personal trainer",
+  "name": "Apex Personal Trainer - Gerenciador de Alunos",
+  "short_name": "Apex Alunos",
+  "description": "Gerenciamento de alunos, treinos e pagamentos para personal trainer Apex",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#09090b",

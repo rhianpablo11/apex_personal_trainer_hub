@@ -1,4 +1,4 @@
-const CACHE_NAME = 'Apex-alunos-cache-v1';
+const CACHE_NAME = 'apex-alunos-cache-v1';
 const ASSETS_TO_CACHE = [
   '/',
   '/index.html',

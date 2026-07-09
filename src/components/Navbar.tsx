@@ -5,7 +5,8 @@ import {
 } from 'lucide-react';
 import { ThemeMode } from '../types';
 // @ts-ignore
-import logoImg from '../assets/logo.jpg';
+import logoImg from '../assets/images/apex_modern_icon_1783622188640.jpg';
+
 interface NavbarProps {
   currentTab: string;
   onNavigate: (tab: string) => void;
@@ -26,6 +27,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   syncing,
 }) => {
   const [showSettings, setShowSettings] = React.useState(false);
+  const [imgError, setImgError] = React.useState(false);
 
   const tabs = [
     { id: 'dashboard', label: 'Painel', icon: Dribbble },
@@ -40,12 +42,22 @@ export const Navbar: React.FC<NavbarProps> = ({
         <div className="space-y-8">
           {/* Brand/Logo */}
           <div className="flex items-center gap-3">
-            <img 
-              src={logoImg} 
-              alt="Apex Logo" 
-              referrerPolicy="no-referrer"
-              className="w-10 h-10 rounded-xl shadow-lg shadow-purple-500/10 border border-purple-500/20 object-cover"
-            />
+            {!imgError ? (
+              <img 
+                src={logoImg} 
+                alt="Apex Logo" 
+                referrerPolicy="no-referrer"
+                onError={() => setImgError(true)}
+                className="w-10 h-10 rounded-xl shadow-lg shadow-purple-500/10 border border-purple-500/20 object-cover"
+              />
+            ) : (
+              <div className="w-10 h-10 bg-zinc-950 dark:bg-zinc-900 border border-purple-500/30 rounded-xl shadow-lg flex items-center justify-center text-zinc-50 relative overflow-hidden shrink-0">
+                <div className="absolute -inset-1 bg-gradient-to-br from-purple-600 to-indigo-600 rounded-xl opacity-35 blur-xs" />
+                <span className="relative font-display font-black text-sm bg-gradient-to-br from-purple-400 to-indigo-400 bg-clip-text text-transparent">
+                  A
+                </span>
+              </div>
+            )}
             <div>
               <h1 className="font-display font-bold text-zinc-900 dark:text-zinc-50 leading-tight tracking-tight">Apex</h1>
               <span className="text-[10px] font-semibold text-purple-600 dark:text-purple-400 tracking-wider uppercase">Trainer Hub</span>
