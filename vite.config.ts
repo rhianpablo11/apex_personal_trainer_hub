@@ -6,14 +6,14 @@ import { VitePWA } from 'vite-plugin-pwa'
 
 export default defineConfig(() => {
   return {
-    plugins: [react(), tailwindcss(),,
+    plugins: [react(), tailwindcss(),
             VitePWA({
       registerType: 'autoUpdate', // Atualiza o app sozinho quando você sobe versão nova
       includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'mask-icon.svg'], // Arquivos estáticos
       manifest: {
-        name: 'Onyx Finance', // Nome completo
-        short_name: 'Onyx', // Nome que fica embaixo do ícone no celular
-        description: 'Seu gerenciador financeiro pessoal',
+        name: 'Apex - Personal Training Hub', // Nome completo
+        short_name: 'Apex', // Nome que fica embaixo do ícone no celular
+        description: 'Seu gerenciador de treinos e alunos',
         theme_color: '#000000', // Cor da barra de status do celular
         background_color: '#000000', // Cor de fundo enquanto carrega
         display: 'standalone', // <--- ISSO TIRA A BARRA DO NAVEGADOR (Fica parecendo app nativo)
