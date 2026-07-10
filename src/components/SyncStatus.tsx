@@ -9,6 +9,7 @@ interface SyncStatusProps {
   onResolveConflict: (resolvedStudents: Student[], resolvedPayments: Payment[]) => void;
   user: any;
   onLogin: () => void;
+  isGoogleConnected: boolean;
 }
 
 export const SyncStatus: React.FC<SyncStatusProps> = ({
@@ -18,6 +19,7 @@ export const SyncStatus: React.FC<SyncStatusProps> = ({
   onResolveConflict,
   user,
   onLogin,
+  isGoogleConnected,
 }) => {
   const formatTime = (isoString: string | null) => {
     if (!isoString) return 'Nunca';
@@ -82,31 +84,40 @@ export const SyncStatus: React.FC<SyncStatusProps> = ({
           <div>
             <div className="flex items-center gap-2">
               <span className="font-display font-bold text-zinc-900 dark:text-zinc-100 text-sm tracking-tight">
-                Banco de Dados no Google Drive
+                {isGoogleConnected ? 'Banco de Dados no Google Drive' : 'Sincronização com Drive Pausada'}
               </span>
-              <span className={`text-[10px] font-bold px-2.5 py-0.5 rounded-full uppercase border ${isOnline ? 'bg-emerald-500/10 border-emerald-200/30 text-emerald-700 dark:text-emerald-300' : 'bg-rose-500/10 border-rose-200/30 text-rose-700 dark:text-rose-300'}`}>
-                {isOnline ? 'Online' : 'Offline'}
+              <span className={`text-[10px] font-bold px-2.5 py-0.5 rounded-full uppercase border ${isGoogleConnected && isOnline ? 'bg-emerald-500/10 border-emerald-200/30 text-emerald-700 dark:text-emerald-300' : 'bg-amber-500/10 border-amber-200/30 text-amber-700 dark:text-amber-300'}`}>
+                {isGoogleConnected && isOnline ? 'Nuvem Ativa' : 'Apenas Local'}
               </span>
             </div>
             <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5">
-              Última atualização: <span className="font-medium text-zinc-700 dark:text-zinc-300">{formatTime(syncState.lastSynced)}</span>
+              {isGoogleConnected 
+                ? <>Última sincronização: <span className="font-medium text-zinc-700 dark:text-zinc-300">{formatTime(syncState.lastSynced)}</span></>
+                : <span className="text-amber-600 dark:text-amber-400 font-semibold animate-pulse">Seus dados estão salvos localmente. Conecte ao Drive para subir as alterações.</span>
+              }
             </p>
           </div>
         </div>
 
         <div className="flex items-center gap-2">
-          {!user ? (
-            <button
-              onClick={onLogin}
-              id="login-drive-btn"
-              className="bg-purple-600 hover:bg-purple-700 dark:bg-purple-500 dark:hover:bg-purple-600 text-white text-xs font-bold px-4 py-2.5 rounded-xl transition shadow-sm cursor-pointer"
-            >
-              Conectar Google Drive
-            </button>
+          {!isGoogleConnected ? (
+            <div className="flex items-center gap-3">
+              <div className="text-right hidden sm:block">
+                <p className="text-xs font-semibold text-zinc-800 dark:text-zinc-200">{user?.displayName || user?.email}</p>
+                <span className="text-[10px] text-amber-600 dark:text-amber-400 font-bold animate-pulse">Integração do Google desplugada</span>
+              </div>
+              <button
+                onClick={onLogin}
+                id="login-drive-btn"
+                className="bg-amber-600 hover:bg-amber-700 dark:bg-amber-500 dark:hover:bg-amber-600 text-white text-xs font-bold px-4 py-2.5 rounded-xl transition shadow-sm cursor-pointer"
+              >
+                Conectar Google Drive
+              </button>
+            </div>
           ) : (
             <div className="flex items-center gap-3">
               <div className="text-right hidden sm:block">
-                <p className="text-xs font-semibold text-zinc-800 dark:text-zinc-200">{user.displayName || user.email}</p>
+                <p className="text-xs font-semibold text-zinc-800 dark:text-zinc-200">{user?.displayName || user?.email}</p>
                 <p className="text-[10px] text-zinc-400">Google Drive Conectado</p>
               </div>
               <button

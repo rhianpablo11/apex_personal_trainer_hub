@@ -9,6 +9,9 @@ export default defineConfig(() => {
     plugins: [react(), tailwindcss(),
             VitePWA({
       registerType: 'autoUpdate', // Atualiza o app sozinho quando você sobe versão nova
+      devOptions: {
+        enabled: true // Permite que o PWA funcione durante o npm run dev
+      },
       includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'mask-icon.svg'], // Arquivos estáticos
       manifest: {
         name: 'Apex - Personal Training Hub', // Nome completo

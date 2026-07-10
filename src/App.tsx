@@ -48,6 +48,7 @@ export default function App() {
   const [needsAuth, setNeedsAuth] = useState(false);
   const [isLoggingIn, setIsLoggingIn] = useState(false);
   const [loadingAuth, setLoadingAuth] = useState(true);
+  const [isGoogleConnected, setIsGoogleConnected] = useState(false);
 
   // Sync / Offline-First / Concurrency State
   const [isOnline, setIsOnline] = useState(navigator.onLine);
@@ -190,11 +191,16 @@ export default function App() {
         setUser(authenticatedUser);
         setNeedsAuth(false);
         setLoadingAuth(false);
+        // Check if token is valid
+        const expiry = Number(localStorage.getItem('apex_google_token_expiry') || '0');
+        const isValid = !!token && Date.now() < expiry;
+        setIsGoogleConnected(isValid);
       },
       () => {
         setUser(null);
         setNeedsAuth(true);
         setLoadingAuth(false);
+        setIsGoogleConnected(false);
       }
     );
   }, []);
@@ -215,6 +221,7 @@ export default function App() {
       if (result) {
         setUser(result.user);
         setNeedsAuth(false);
+        setIsGoogleConnected(true);
       }
     } catch (err) {
       console.error('Google login failed', err);
@@ -227,6 +234,7 @@ export default function App() {
     await logout();
     setUser(null);
     setNeedsAuth(true);
+    setIsGoogleConnected(false);
     setStudentsFileId('');
     setPaymentsFileId('');
     setLocalStudentsModTime('');
@@ -301,9 +309,12 @@ export default function App() {
         conflictData: null
       });
 
-    } catch (err) {
+    } catch (err: any) {
       console.error('Error synchronizing database:', err);
       setSyncState(prev => ({ ...prev, syncing: false }));
+      if (err.message?.includes('authenticated') || err.message?.includes('401') || err.message?.includes('Unauthorized')) {
+        setIsGoogleConnected(false);
+      }
     }
   };
 
@@ -373,8 +384,11 @@ export default function App() {
           const nowString = new Date().toISOString();
           localStorage.setItem(`apex_last_synced_${emailKey}`, nowString);
           setSyncState(prev => ({ ...prev, lastSynced: nowString }));
-        } catch (err) {
+        } catch (err: any) {
           console.error('Failed to sync changes to Google Drive:', err);
+          if (err.message?.includes('authenticated') || err.message?.includes('401') || err.message?.includes('Unauthorized')) {
+            setIsGoogleConnected(false);
+          }
         }
       }
     }
@@ -833,6 +847,7 @@ export default function App() {
           onResolveConflict={handleResolveConflict}
           user={user}
           onLogin={handleGoogleLogin}
+          isGoogleConnected={isGoogleConnected}
         />
 
         {/* Dynamic Route View rendering */}
