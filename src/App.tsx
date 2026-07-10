@@ -634,7 +634,12 @@ export default function App() {
     }
   };
 
-  const handleCancelWorkout = async (studentId?: string, eventId?: string, studentName?: string, dateTime?: string) => {
+  const handleCancelWorkout = async (studentId?: string, eventId?: string, studentName?: string, dateTime?: string): Promise<string[]> => {
+    const deletedIds: string[] = [];
+    if (eventId) {
+      deletedIds.push(eventId);
+    }
+
     // 1. Clear student's training date/time locally
     let targetStudentId = studentId;
     if (!targetStudentId && studentName) {
@@ -708,6 +713,7 @@ export default function App() {
           for (const e of matchedEvents) {
             if (e.id) {
               await deleteCalendarEvent(e.id);
+              deletedIds.push(e.id);
             }
           }
         }
@@ -715,6 +721,8 @@ export default function App() {
         console.error('Failed to clean up Google Calendar events during cancel:', err);
       }
     }
+
+    return deletedIds;
   };
 
   // Router dispatcher

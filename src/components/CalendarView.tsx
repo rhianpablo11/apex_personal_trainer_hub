@@ -28,7 +28,7 @@ interface CalendarViewProps {
   user: any;
   onSyncCalendar: (student: Student) => void;
   onScheduleWorkout: (studentId: string, dateTime: string, durationMin: number, focus: string) => Promise<void>;
-  onCancelWorkout: (studentId?: string, eventId?: string, studentName?: string, dateTime?: string) => Promise<void>;
+  onCancelWorkout: (studentId?: string, eventId?: string, studentName?: string, dateTime?: string) => Promise<string[]>;
 }
 
 export const CalendarView: React.FC<CalendarViewProps> = ({
@@ -87,18 +87,19 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
   endOfWeek.setHours(23, 59, 59, 999);
 
   // Fetch from Google Calendar
-  const fetchCalendar = async () => {
+  const fetchCalendar = async (excludeIds?: Set<string> | any) => {
     if (!user) return;
     setLoading(true);
     setError(null);
     try {
       const gEvents = await listCalendarEvents(startOfWeek.toISOString(), endOfWeek.toISOString());
+      const currentDeleted = (excludeIds && excludeIds instanceof Set) ? excludeIds : deletedEventIds;
       // Filter training events (events containing "Treino" or tagged by App) and omit recently deleted ones
       setEvents(gEvents.filter(e => 
         (e.summary.toLowerCase().includes('treino') || 
          e.description?.toLowerCase().includes('italo') ||
          e.description?.toLowerCase().includes('apex')) &&
-        (!e.id || !deletedEventIds.has(e.id))
+        (!e.id || !currentDeleted.has(e.id))
       ));
     } catch (err: any) {
       console.error(err);
@@ -423,21 +424,22 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
     setProcessingMessage(`Cancelando agendamento de ${name} e atualizando bases...`);
 
     try {
-      await onCancelWorkout(studentId, eventId, name, dateTime);
+      const deletedIds = await onCancelWorkout(studentId, eventId, name, dateTime);
       
       // Update local state dynamically
-      if (eventId) {
-        setDeletedEventIds(prev => {
-          const next = new Set(prev);
-          next.add(eventId);
-          return next;
-        });
-        setEvents(prev => prev.filter(e => e.id !== eventId));
+      const newDeletedSet = new Set(deletedEventIds);
+      if (deletedIds && Array.isArray(deletedIds)) {
+        deletedIds.forEach(id => newDeletedSet.add(id));
+      } else if (eventId) {
+        newDeletedSet.add(eventId);
       }
+
+      setDeletedEventIds(newDeletedSet);
+      setEvents(prev => prev.filter(e => !newDeletedSet.has(e.id || '')));
       
       // Refresh Google Calendar events to make sure everything is perfectly synced
       if (user) {
-        await fetchCalendar();
+        await fetchCalendar(newDeletedSet);
       }
       
       // Show mini toast
